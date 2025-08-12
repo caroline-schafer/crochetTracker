@@ -20,7 +20,6 @@ class ProjectViewSet(viewsets.ModelViewSet):
         status_filter = self.request.query_params.get('status')
         print("Status filter received:", status_filter)
 
-
         cutoff_date = timezone.now().date() - timedelta(days=30)
 
         # --- Auto-move WIPs -> Graveyard ---
@@ -50,11 +49,14 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
         # --- Apply status filter if provided ---
         queryset = self.queryset.filter(user=user)
-        status_filter = self.request.query_params.get('status')
         if status_filter:
             queryset = queryset.filter(status=status_filter)
 
         return queryset
+
+    def perform_create(self, serializer):
+        # Assign the logged-in user automatically when creating a project
+        serializer.save(user=self.request.user)
 
 
 class LogViewSet(viewsets.ModelViewSet):

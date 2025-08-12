@@ -32,8 +32,10 @@ api.interceptors.request.use(
 
     if (!isPublic) {
       const token = await getToken();
+      console.log("TOKEN FOUND: ", token);
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
+        console.log("SENDING WITH TOKEN");
       }
     }
 
